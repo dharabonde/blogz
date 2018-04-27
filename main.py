@@ -5,19 +5,19 @@ app = Flask(__name__)
 app.config['DEBUG'] = True
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://blogz:blogz@localhost:8889/blogz'
 app.config['SQLALCHEMY_ECHO'] = True
-db = SQLAlchemy(app)
 app.secret_key = 'itsasecret'
+db = SQLAlchemy(app)
 
 
 class Blog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(120))
-    bodytext = db.Column(db.String(500))
+    body = db.Column(db.String(500))
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
    
-    def __init__(self, title, bodytext,owner):
+    def __init__(self, title, body, owner):
         self.title = title
-        self.bodytext = bodytext
+        self.body= body
         self.owner = owner
 
 
@@ -44,7 +44,7 @@ def login():
         password = request.form['password']
 
         if (not username) or (username.strip() == ""):
-                flash("Please specify username.")
+                flash("Please enter a username.")
                 error_exists=True
         else:
 
@@ -60,7 +60,7 @@ def login():
      
              
             else:
-                flash('user does not exists!')
+                flash('Not a valid User!')
                 return render_template('login.html')
         
     return render_template('login.html')
@@ -79,23 +79,23 @@ def signup():
                         
     #Validation 2:
         if (not username) or (username.strip() == ""):
-            flash("Please specify username.")
+            flash("Please enter a username.")
             error_exists=True
         else:
             if len(username) <3 :
-                flash("Invalid Username.")
+                flash("Not a valid User.")
                 error_exists=True
 
         if (not password) or (password.strip() == ""):
-            flash("Please specify the password.")
+            flash("Please enter the password.")
             error_exists=True
         else:
             if len(password) <3:
-                flash("Invalid Password.")
+                flash("Not a Valid Password.")
                 error_exists=True
         
             if (not verifypassword) or (verifypassword.strip() == ""):
-                flash("Please verify password.")
+                flash("Please enter a password.")
                 error_exists=True
             if verifypassword != password:
                 flash("Passwords do not match.")
@@ -136,29 +136,29 @@ def newpost():
     if request.method == 'POST':
         error_exists = False
         title_error = ""
-        bodytext_error = ""
+        body_error = ""
         title=request.form['title']
-        bodytext=request.form['bodytext']
-        #blog =Blog(title, bodytext, owner)
+        body=request.form['body']
+        #blog =Blog(title, body, owner)
     
         if (not title) or (title.strip() == ""):
-           title_error = "Please provide a title for the blog"
+           title_error = "Oops.. where's your title??"
            error_exists=True
            
 
-        if (not bodytext) or (bodytext.strip() == ""):
-            bodytext_error = "Please provide blog text for the blog"
+        if (not body) or (body.strip() == ""):
+            body_error = "No Text.. No New Blog!! "
             error_exists = True
         
         if not error_exists :
 
-            blog = Blog(title, bodytext,owner)
+            blog = Blog(title, body,owner)
             db.session.add(blog)
             db.session.commit()
 
             return redirect('/blog?id={0}'.format(blog.id))
         else:
-            return render_template('newblog.html',title="Post New Blog",title_error=title_error,bodytext_error=bodytext_error,titlevalue=title,textarea=bodytext)  
+            return render_template('newblog.html',title="Post New Blog",title_error=title_error,body_error=body_error,titlevalue=title,textarea=body)  
     
     else:
         return render_template('newblog.html', title="Post New Blog")
@@ -178,7 +178,7 @@ def list_blogs():
     username = request.args.get('user')
 
     if not blogid and not username:
-        posted_blogs = db.session.query(User.username,Blog.title,Blog.bodytext,Blog.id).join(Blog).all()
+        posted_blogs = db.session.query(User.username,Blog.title,Blog.body,Blog.id).join(Blog).all()
         return render_template('blog.html', title="All blogs", 
             posted_blogs = posted_blogs)
     
@@ -189,7 +189,7 @@ def list_blogs():
             user= User.query.get(posted_blog.owner_id)
             return render_template('detailblog.html',title="Blog Detail",blog=posted_blog, user=user)
         else:
-            posted_blogs = db.session.query(User.username,Blog.title,Blog.bodytext,Blog.id).join(Blog).filter(User.username == username).all()
+            posted_blogs = db.session.query(User.username,Blog.title,Blog.body,Blog.id).join(Blog).filter(User.username == username).all()
             return render_template('blog.html',title="User Blogs", posted_blogs=posted_blogs)
 
 
