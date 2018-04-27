@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<form action="/login" method="post">
+    <h1> Login </h1>
+    <label> Username:
+    <input name="username" type="text" value='{{username}}' />
+    </label>
+    <p class= "error">{{username_error}}</p>
+    <label> Password :
+    <input name="password" type="password" value="" />
+    </label>
+    <p class = "error">{{password_error}}</p>
+  
+              
+    <input type="submit" value="Submit"/>
+    <p> Don't have an account? <a href="/signup">Create a New Account.</a></p>
+    
+</form>
+
+
+    {% endblock %}
