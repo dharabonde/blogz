@@ -1,21 +1,40 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-    <title>{{title}}</title>
-    <style>
-        h1{
-            text-align: center;
-        }
-        .error{
-            color: red;
-        }
-    </style>
-</head>
+    <head>
+        <title>{{title}}</title>
+
+        <nav>
+       
+        <a href="/index"> home</a> |
+        <a href="/newpost"> new post </a>|
+        <a href="/blog"> all posts </a>
+        
+          
+            <div style = "clear: right; float: right; text-align: right;">
+                                
+                    
+                    <a href='/login'>login</a> |
+                    <a href='/logout'>logout</a>
+                    
+            </div> 
+        </nav>
+    
+
+    </head>
+    
 <body>
-    <nav>
-        <a href="/blog">Main Blog Page</a>  
-        <a href="/newpost">Add a Blog Entry</a>
-    </nav>
+        
+        
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <ul class=flashes>
+              {% for message in messages %}
+              <li>{{ message }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
+    
 
     {% block content %}
     {% endblock %}
